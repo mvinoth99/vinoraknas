@@ -1,0 +1,93 @@
+var express = require('express');
+var app = express();
+var crypto = require('crypto');
+const StellarSdk = require('stellar-sdk');
+
+const mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "comeon123",
+  database:"newDB"
+});
+
+var path = require('path');
+var fs = require('fs');
+
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
+
+app.use(express.static(path.join(__dirname)));
+
+
+var server = app.listen(process.env.PORT || 3600, function () {
+    var port = server.address().port;
+    console.log("App now running on port", port);	
+	});
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname+"/form.html");
+});
+
+app.post("/api/hashwrite", function(req , res){
+	StellarSdk.Network.use(new StellarSdk.Network('Standalone Network ; February 2017'));
+	const server = new StellarSdk.Server('http://192.168.4.235:8000', {allowHttp: true});
+	var memo;
+	var key1 = StellarSdk.Keypair.fromSecret('SC5O7VZUXDJ6JBDSZ74DSERXL7W3Y5LTOAMRF7RQRL3TAGAPS7LUVG3L');
+	var algo = 'sha256';
+	var d = crypto.createHash('sha256').update(JSON.stringify(req.body)).digest("hex");
+	var memo = StellarSdk.Memo.hash(d);
+	console.log("hashvalue:"+d);
+	console.log(req.body);
+
+
+(async function main() {
+	
+	const account = new StellarSdk.Account("GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI","16");
+	const fee = await server.fetchBaseFee();
+
+ 	const transaction = new StellarSdk.TransactionBuilder(account, { memo: memo,fee })
+        .addOperation(StellarSdk.Operation.payment({
+				source: "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI",
+                destination: "GD7PR7TFR6JPKHDL7J3BM73OL4AM77JRSCFYM5XIQSXJ4X2UPJ4MYSPW",
+                asset: StellarSdk.Asset.native(),
+                amount: "10"  
+            }))
+        
+        // mark this transaction as valid only for the next 30 seconds
+        .setTimeout(30)
+        .build();
+
+	transaction.sign(key1);
+
+	//console.error(transaction);
+		
+	    try {
+	        const transactionResult = await server.submitTransaction(transaction);
+	        console.log(transactionResult.hash);
+
+			const sendResponseObject = transactionResult;
+
+			con.connect(function(err) {
+  				if (err) throw err;
+  				console.log("Connected!");
+  				const data =req.body;
+  				var sql = "INSERT INTO details VALUES ('"+data.f_name+"','"+data.l_name+"','"+data.age+"','"+data.yog+"','"+data.uuid+"','"+d+"',NULL,'"+transactionResult.hash+"')";
+  				con.query(sql, function (err, result) {
+    				if (err) throw err;
+    				console.log("1 record inserted");
+  				});
+			});
+
+			var jsonString= JSON.stringify(sendResponseObject);
+			res.send(jsonString);
+	    } catch (err) {
+	        console.error(err);
+			 const sendResponseObject= err;
+			 var jsonString= JSON.stringify(sendResponseObject);
+			 res.send(jsonString);
+	    }
+	})()		
+})

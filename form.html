@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<link rel = "stylesheet"
+   type = "text/css"
+   href = "css/form.css" />
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<style>
+
+  *
+{
+font-family: "TimesNewRoman";
+ font-size: 20px;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input {
+
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+#di1 {
+position:absolute;
+top:5%;
+  border-radius: 25px;
+  background-color: #f2f2f2;
+  padding: 20px;
+  width:200;
+  left:30%;
+  
+}
+
+
+#sel1
+{
+ 
+ width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  box-sizing: border-box;
+}
+hr
+{
+  display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-left: auto;
+  margin-right: auto;
+  border-style: inset;
+  border-width: 1px;
+  border-color:black;
+}
+</style>   
+</head>
+
+<script type="text/javascript">
+function Checkval(val){
+ 
+ if(val=='firstname')
+ { var element=document.getElementById('p1');
+   element.style.display='block';
+   var x = document.getElementById("sel1");
+   x.remove(x.selectedIndex);
+ }
+ if(val=='lastname')
+ {
+   var element=document.getElementById('p2');
+   element.style.display='block';
+    var x = document.getElementById("sel1");
+   x.remove(x.selectedIndex);
+ }
+ if(val=='age')
+ {
+   var element=document.getElementById('p3');
+   element.style.display='block';
+    var x = document.getElementById("sel1");
+   x.remove(x.selectedIndex);
+ }
+ if(val=='yog')
+ {
+   var element=document.getElementById('p4');
+   element.style.display='block';
+    var x = document.getElementById("sel1");
+   x.remove(x.selectedIndex);
+
+ }
+ if(val=='uuid')
+ {
+   var element=document.getElementById('p5');
+   element.style.display='block';
+    var x = document.getElementById("sel1");
+   x.remove(x.selectedIndex);
+ }
+}
+</script> 
+
+</head>
+<body>
+    
+<div id="di1">
+
+<h3><center>Data Validation</center></h3>
+<h4><center>Pick the details you want to verify</center></h4>
+<select id="sel1" onchange='Checkval(this.value);'> 
+    <option selected>Select the detail</option>
+    <option value="firstname" >First name</option>
+    <option value="lastname">Last name</option>
+    <option value="age">Age</option>
+  <option value="yog">Year of Graduation</option>
+  <option value="uuid">uuid</option>
+  </select>
+<hr>
+
+<br>
+
+  <form action="/api/hashwrite" method = "POST" name="myForm" onsubmit="return validateForm()">
+    
+    <input type="text" id="p1" name="f_name" placeholder="firstname" style='display:none;'/>
+
+    
+    <input type="text" id="p2" name="l_name"  placeholder="lastname"style='display:none;'/>
+
+       
+    <input type="number" id="p3" name="age" placeholder="Age" style='display:none;'/>
+  
+    
+    <input type="number" id="p4" name="yog" placeholder="Year of Graduation" style='display:none;'/>
+
+   
+    <input type="number" id="p5" name="uuid" placeholder="uuid" style='display:none;'/>
+  <br>
+  <!--<div id="cap" class="g-recaptcha" data-sitekey="6LcMx6EUAAAAALwleLN6HTmcOhvqcI_qAGsx2cQQ"></div>-->
+  <input type="submit" name="submit" value="Submit">
+    
+  </form>
+</div>
+ 
+
+ <!-- <script src="https://www.google.com/recaptcha/api.js"></script> -->
+</body>
+</html>
